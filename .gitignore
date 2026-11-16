@@ -1,0 +1,17 @@
+# packaged zips for the Chrome Web Store (built by tools/package.ps1)
+dist/
+*.zip
+
+# secrets — the project doesn't use any, but never commit them if added later
+.env
+.env.*
+*.pem
+*.crx
+
+# tools / editors / OS clutter
+node_modules/
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+.DS_Store

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Glyph Zoo</title>
+  <meta name="description" content="A living ASCII menagerie — procedural creatures drawn with characters on a glowing grid.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="grid">
+  <div class="sky" aria-hidden="true"></div>
+  <canvas id="stage" aria-hidden="true"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <!-- Animal picker (buttons are generated in main.js) -->
+  <nav class="species ui" id="species" aria-label="Choose an animal"></nav>
+
+  <!-- Weather (top left). Click to set your city in Tweaks. -->
+  <button class="weather ui" id="weather" type="button" hidden>
+    <span class="weather-icon" id="weatherIcon" aria-hidden="true">☀</span>
+    <span class="weather-text">
+      <span class="weather-temp" id="weatherTemp">--°</span>
+      <span class="weather-city" id="weatherCity"></span>
+    </span>
+  </button>
+
+  <div class="top-actions ui">
+    <button class="top-btn icon-only" id="helpBtn" type="button" aria-expanded="false" aria-controls="help" aria-label="Help" title="Help (?)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.4"/><circle cx="12" cy="17" r=".6" fill="currentColor"/>
+      </svg>
+    </button>
+    <button class="top-btn" id="tweaksBtn" type="button" aria-expanded="false" aria-controls="tweaks">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>
+      </svg>
+      Tweaks
+    </button>
+  </div>
+
+  <aside class="panel help ui" id="help" hidden>
+    <div class="tweaks-head">
+      <h2>How to play</h2>
+    </div>
+    <h3>Mouse</h3>
+    <dl class="keys">
+      <dt>Click an animal</dt><dd>It reacts</dd>
+      <dt>Click empty space</dt><dd>Ripple + food</dd>
+      <dt><kbd>Shift</kbd> + click</dt><dd>Add an animal</dd>
+      <dt>Swipe fast</dt><dd>Animals scatter</dd>
+      <dt>Click the quote</dt><dd>Next quote</dd>
+      <dt>Click the weather</dt><dd>Change city</dd>
+    </dl>
+    <h3>Keyboard</h3>
+    <dl class="keys">
+      <dt><kbd>1</kbd>–<kbd>9</kbd> <kbd>←</kbd><kbd>→</kbd></dt><dd>Switch animal</dd>
+      <dt><kbd>S</kbd></dt><dd>Next style</dd>
+      <dt><kbd>G</kbd></dt><dd>Characters</dd>
+      <dt><kbd>N</kbd></dt><dd>Auto / day / night</dd>
+      <dt><kbd>M</kbd></dt><dd>Sound on/off</dd>
+      <dt><kbd>Space</kbd></dt><dd>Pause</dd>
+      <dt><kbd>H</kbd></dt><dd>Hide everything</dd>
+      <dt><kbd>T</kbd></dt><dd>Tweaks</dd>
+      <dt><kbd>/</kbd></dt><dd>Search</dd>
+      <dt><kbd>?</kbd></dt><dd>This help</dd>
+    </dl>
+    <p class="help-note">Type an animal name, “night”, or “kana” in the search box to switch to it.</p>
+  </aside>
+
+  <aside class="panel ui" id="tweaks" hidden>
+    <div class="tweaks-head">
+      <h2>Tweaks</h2>
+      <button id="resetTweaks" class="link-btn" type="button">Reset</button>
+    </div>
+
+    <div class="field">
+      <span class="field-label">Characters <kbd>G</kbd></span>
+      <div class="seg" id="glyphs" role="radiogroup" aria-label="Character set"></div>
+    </div>
+    <div class="field" id="styleField">
+      <span class="field-label"><span>Style · <span id="styleFor">Butterfly</span></span> <kbd>S</kbd></span>
+      <div class="seg seg-wrap" id="astyle" role="radiogroup" aria-label="Animal style"></div>
+    </div>
+    <div class="field">
+      <span class="field-label">Time of day <kbd>N</kbd></span>
+      <div class="seg" id="time" role="radiogroup" aria-label="Time of day"></div>
+    </div>
+
+    <div class="field">
+      <span class="field-label">Clock, quote &amp; weather</span>
+      <div class="toggles">
+        <label class="toggle"><input type="checkbox" id="showClock"><span>Clock</span></label>
+        <label class="toggle"><input type="checkbox" id="clock24"><span>24-hour</span></label>
+        <label class="toggle"><input type="checkbox" id="showQuote"><span>Quote</span></label>
+        <label class="toggle"><input type="checkbox" id="showWeather"><span>Weather</span></label>
+      </div>
+      <div class="city-row">
+        <input id="city" type="text" placeholder="Your city, e.g. Chennai" autocomplete="off" spellcheck="false" aria-label="City for weather">
+        <div class="seg" id="unit" role="radiogroup" aria-label="Temperature unit"></div>
+      </div>
+      <span class="field-note" id="weatherStatus"></span>
+    </div>
+
+    <label class="slider">
+      <span>Creatures <output id="countOut"></output></span>
+      <input type="range" id="count" min="3" max="30" step="1">
+    </label>
+    <label class="slider">
+      <span>Speed <output id="speedOut"></output></span>
+      <input type="range" id="speed" min="0.2" max="2.5" step="0.1">
+    </label>
+    <label class="slider">
+      <span>Cell size <output id="cellOut"></output></span>
+      <input type="range" id="cell" min="5" max="24" step="1">
+    </label>
+
+    <div class="toggles">
+      <label class="toggle"><input type="checkbox" id="glow"><span>Glow</span></label>
+      <label class="toggle"><input type="checkbox" id="grid"><span>Grid</span></label>
+      <label class="toggle"><input type="checkbox" id="trails"><span>Trails</span></label>
+      <label class="toggle"><input type="checkbox" id="scatter"><span>Scatter</span></label>
+      <label class="toggle"><input type="checkbox" id="flocking"><span>Flocking</span></label>
+      <label class="toggle"><input type="checkbox" id="foodchain"><span>Food chain</span></label>
+      <label class="toggle"><input type="checkbox" id="sound"><span>Sound <kbd>M</kbd></span></label>
+      <label class="toggle"><input type="checkbox" id="lowpower"><span>Low power</span></label>
+    </div>
+  </aside>
+
+  <main class="center ui">
+    <div class="clock" id="clock">--:--</div>
+    <h1 class="greeting">
+      <span id="greet">Hello</span>, <span id="name" contenteditable="plaintext-only" spellcheck="false" title="Click to edit your name">friend</span>
+    </h1>
+
+    <form class="search" id="search" role="search">
+      <div class="search-row">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>
+        </svg>
+        <input id="q" type="text" placeholder="Search the web, or type an animal, “night”…" autocomplete="off" aria-label="Search the web, or type an animal name">
+        <button type="submit" class="send" aria-label="Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 19V5M5 12l7-7 7 7"/>
+          </svg>
+        </button>
+      </div>
+    </form>
+  </main>
+
+  <!-- Daily quote (bottom). Click for another one. -->
+  <button class="quote ui" id="quote" type="button" title="Click for another quote">
+    <span id="quoteText"></span>
+    <span id="quoteBy"></span>
+  </button>
+
+  <div class="badge" id="pausedBadge" hidden>Paused · press <kbd>Space</kbd> to resume</div>
+
+  <!-- order matters: helpers → animals → quotes → weather → sound → engine -->
+  <script src="util.js"></script>
+  <script src="species.js"></script>
+  <script src="quotes.js"></script>
+  <script src="weather.js"></script>
+  <script src="audio.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
