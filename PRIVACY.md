@@ -23,4 +23,4 @@ Nothing else leaves your computer.
 
 ## Contact
 
-Questions? Open an issue on the project's GitHub page.
+Questions? Open an issue at https://github.com/Deeksha-Bhardwaj/glyph-zoo/issues.

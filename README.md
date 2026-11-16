@@ -1,10 +1,12 @@
 # Glyph Zoo
 
-A living ASCII ecosystem. Nine procedural animals swim, flutter, flock, hunt and glow across a character grid, and each one is drawn entirely with text characters. You can click them, feed them, make ripples and play music with them.
+A living ASCII ecosystem. Nine procedural animals swim, flutter, flock and glow across a character grid, and each one is drawn entirely with text characters. You can click them, feed them, make ripples and play music with them.
 
-**Live demo:** _add your GitHub Pages link here_
+**Live demo:** https://deeksha-bhardwaj.github.io/glyph-zoo/
 
-![screenshot](screenshot.png) <!-- add a screenshot or GIF here -->
+<!-- To show a preview: save a screenshot as screenshot.png in this folder, then remove these comment marks around the next line.
+![Glyph Zoo screenshot](screenshot.png)
+-->
 
 ## Features
 
