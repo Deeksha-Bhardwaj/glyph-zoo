@@ -133,9 +133,16 @@ function drawIcon(size) {
   return px;
 }
 
+// extension icons (go into the zip)
 const outDir = path.join(__dirname, '..', 'icons');
 fs.mkdirSync(outDir, { recursive: true });
 for (const size of [16, 48, 128]) {
   writePNG(path.join(outDir, `icon${size}.png`), size, drawIcon(size));
   console.log(`wrote icons/icon${size}.png`);
 }
+
+// store logo (uploaded separately in the store dashboard, not part of the zip)
+const storeDir = path.join(__dirname, '..', 'store-assets');
+fs.mkdirSync(storeDir, { recursive: true });
+writePNG(path.join(storeDir, 'logo300.png'), 300, drawIcon(300));
+console.log('wrote store-assets/logo300.png');
